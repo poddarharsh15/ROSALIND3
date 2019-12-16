@@ -1,30 +1,15 @@
-import sys
-from rosalind_utility import parse_fasta
+from scripts import ReadFASTA
 
 
-def olap_graph(strings, k):
-    ''' Create Overlap Graph
-    :param strings: DNA strings
-    :param k: suffix length
-    :return: adjacency list of Ok
-    '''
-    adj_list = []
-    for name, string in strings.items():
-        for name2, string2 in strings.items():
-            if name != name2:
-                if string[-k:] == string2[:k]:
-                    adj_list.append((name, name2))
-    return adj_list
+dna_list = ReadFASTA('data/rosalind_grph.txt')
+
+overlaps = []
+for i in range(len(dna_list)):
+    for j in filter(lambda j: j!=i, range(len(dna_list))):
+        if  dna_list[i][1][-3:] == dna_list[j][1][0:3]:
+            overlaps.append(dna_list[i][0]+' '+dna_list[j][0])
 
 
-if __name__ == "__main__":
-    '''
-    Given: A collection of DNA strings in FASTA format having total length at most 10 kbp.
-    Return: The adjacency list corresponding to O3. You may return edges in any order.
-    '''
-    input_lines = sys.stdin.read().splitlines()
-    DNA_strings = parse_fasta(input_lines)
-    olap_adj_list = olap_graph(DNA_strings, 3)
-
-    for olap in olap_adj_list:
-        print(' '.join(olap))
+print '\n'.join(overlaps)
+with open('output/012_GRPH.txt', 'w') as output_data:
+    output_data.write('\n'.join(overlaps))
